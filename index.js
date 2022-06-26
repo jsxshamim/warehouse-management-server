@@ -100,7 +100,28 @@ const run = async () => {
             res.send(result);
         });
 
-       
+        // Edit Inventory Item
+        app.put("/inventory/:id", async (req, res) => {
+            const id = req.params.id;
+
+            const updatedInventory = req.body;
+
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: updatedInventory,
+            };
+            const result = await inventoriesCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+        });
+
+        // Delete Item
+        app.delete("/inventory/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await inventoriesCollection.deleteOne(query);
+            res.send(result);
+        });
     } finally {
         // await client.close();
     }
