@@ -93,7 +93,14 @@ const run = async () => {
             res.send(result);
         });
 
-        
+        // Add Inventory
+        app.post("/inventory", async (req, res) => {
+            const inventory = req.body;
+            const result = await inventoriesCollection.insertOne(inventory);
+            res.send(result);
+        });
+
+       
     } finally {
         // await client.close();
     }
