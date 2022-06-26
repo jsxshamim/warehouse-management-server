@@ -51,6 +51,27 @@ const run = async () => {
             res.send(items);
         });
 
+        // counts total number of items
+        app.get("/numberOfItems", async (req, res) => {
+            const count = await inventoriesCollection.estimatedDocumentCount({});
+            res.json({ count });
+        });
+
+        // get my inventories filter by email
+        app.get("/myInventories", jwtVerify, async (req, res) => {
+            const decodedEmail = req.decoded.email;
+            const email = req.query.email;
+
+            if (decodedEmail === email) {
+                const query = { email };
+                const cursor = inventoriesCollection.find(query).sort({ _id: -1 });
+                const inventories = await cursor.toArray();
+                res.send(inventories);
+            } else {
+                res.status(403).send({ message: "Error 403 - Forbidden" });
+            }
+        });
+
         
     } finally {
         // await client.close();
