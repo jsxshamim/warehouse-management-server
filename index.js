@@ -34,7 +34,12 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 const run = async () => {
     try {
         await client.connect();
+
+        // Inventory Collections
         const inventoriesCollection = client.db("easyStock").collection("inventories");
+
+        // Feature Collections
+        const featuresCollection = client.db("easyStock").collection("features");
 
         // Authentication by JWT
 
@@ -57,7 +62,7 @@ const run = async () => {
             if (page || size) {
                 items = await cursor
                     .skip(page * size)
-                    .limit(size)
+                    .limit(size || 5)
                     .toArray();
             } else {
                 items = await cursor.toArray();
@@ -136,6 +141,14 @@ const run = async () => {
             const query = { _id: ObjectId(id) };
             const result = await inventoriesCollection.deleteOne(query);
             res.send(result);
+        });
+
+        // get Features
+        app.get("/features", async (req, res) => {
+            const query = {};
+            const cursor = featuresCollection.find(query);
+            const features = await cursor.toArray();
+            res.send(features);
         });
     } finally {
         // await client.close();
