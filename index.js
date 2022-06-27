@@ -77,7 +77,7 @@ const run = async () => {
             res.json({ count });
         });
 
-        // get my inventories filter by email
+        // get my inventories filter by email.
         app.get("/myInventories", jwtVerify, async (req, res) => {
             const decodedEmail = req.decoded.email;
             const email = req.query.email;
