@@ -20,9 +20,8 @@ const jwtVerify = (req, res, next) => {
     jwt.verify(token, process.env.JWT_ACCESS_TOKEN, async (err, decoded) => {
         if (err) {
             return res.status(403).send({ message: "Error 403 - Forbidden" });
-        } else {
-            req.decoded = decoded;
         }
+        req.decoded = decoded;
         await next();
     });
 };
@@ -82,12 +81,12 @@ const run = async () => {
             const decodedEmail = req.decoded.email;
             const email = req.query.email;
 
-            if (decodedEmail === email) {
-                const query = { email };
+            try {
+                const query = { email: decodedEmail };
                 const cursor = inventoriesCollection.find(query).sort({ _id: -1 });
                 const inventories = await cursor.toArray();
                 res.send(inventories);
-            } else {
+            } catch (error) {
                 res.status(403).send({ message: "Error 403 - Forbidden" });
             }
         });
